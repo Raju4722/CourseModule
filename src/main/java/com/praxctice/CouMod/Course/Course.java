@@ -9,6 +9,8 @@ public class Course {
 public int getCourId() {
 	return CourId;
 }
+
+	
 public void setCourId(int courId) {
 	CourId = courId;
 }
