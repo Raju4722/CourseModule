@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.praxctice.CouMod.Course.CourseEntity;
 import com.praxctice.CouMod.Course.CourseRepository;
+import com.praxctice.CouMod.Exceptions.usernotfound;
 
 @Service
 public class ModuleService {
@@ -26,12 +27,17 @@ public class ModuleService {
 	
     
 	public List<ModulesEntity> getone(int id) {
-		CourseEntity byId = repocour.findById(id).orElse(null);
-		
+	CourseEntity byId = repocour.findById(id).orElse(null);
+		if(byId==null) {
+			throw new usernotfound("NOFinding");
+		}
 	
 		int id2 = byId.getId();
          List<ModulesEntity> all = repo.findAll();
          List<ModulesEntity> collect = all.stream().filter(a-> a.getCourse().getId()==id2).collect(Collectors.toList());
+         if (collect==null) {
+        	 throw new usernotfound("NO finding");
+         }
          return collect;
 	}
 //	public ModulesEntity putmod(int id,ModulesEntity mode) {
@@ -42,9 +48,12 @@ public class ModuleService {
 
 
 	public ModulesEntity putmod(int id, ModulesEntity mode) {
-		 CourseEntity got = repocour.getById(id);
-		   repo.save(new ModulesEntity(mode.getModid(),mode.getModname(),mode.getDuration(),got));
-		return null;
+	CourseEntity got = repocour.findById(id).orElse(null);
+	if(got==null) {
+		throw new usernotfound("No such user exist to insert a module");
+	}
+		   ModulesEntity save = repo.save(new ModulesEntity(mode.getModid(),mode.getModname(),mode.getDuration(),got));
+		return save;
 	}
 
 
